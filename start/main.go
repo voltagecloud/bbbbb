@@ -17,6 +17,19 @@ func main() {
 	server()
 }
 
+func writeToBoard(content string) error {
+	f, err := os.OpenFile("database.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	if _, err = f.WriteString(fmt.Sprintf("%s\n", content)); err != nil {
+		return err
+	}
+	return nil
+}
+
 func server() {
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodPost {
@@ -26,15 +39,10 @@ func server() {
 				http.Error(w, err.Error(), http.StatusBadRequest)
 				return
 			}
-			f, err := os.OpenFile("database.txt", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
+			err = writeToBoard(req.Message)
 			if err != nil {
-				panic(err)
-			}
-
-			defer f.Close()
-
-			if _, err = f.WriteString(fmt.Sprintf("%s\n", req.Message)); err != nil {
-				panic(err)
+				fmt.Println(err)
+				w.WriteHeader(http.StatusInternalServerError)
 			}
 			w.WriteHeader(http.StatusCreated)
 		} else if r.Method == http.MethodGet {

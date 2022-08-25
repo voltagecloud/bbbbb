@@ -1,4 +1,4 @@
-# BitBlockBoom Voltage Workshop
+# BBBBB (BitBlockBoom Bulletin Board)
 
 Welcome to a fun workshop with Voltage! In this workshop we are going to enhance a bulletin board! Currently the bulletin board will accept any comments via an API POST request. However this leads to lots of spam.
 
